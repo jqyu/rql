@@ -3,10 +3,10 @@ import Schema from './Schema'
 import Radredis from './sources/Radredis'
 import Radgraph from './sources/Radgraph'
 
-function RQL(services) {
+function RQL(services, options) {
   const rsl =
     { executor: Executor({ trace: true })
-    , schema: Schema(services)
+    , schema: Schema(services, options)
     , serve: (req) => null
     }
   return rsl
