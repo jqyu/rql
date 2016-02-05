@@ -86,6 +86,7 @@ function Executor(opts) {
 
   }
 
+
   // enqueue :: Request r a -> Promise a
   // SIDE EFFECT: adds a `Job r a` to queue
   function enqueue (r) {
@@ -100,30 +101,45 @@ function Executor(opts) {
     })
   }
 
-  // -- for some heterogeneous d a:
-  // exec :: Request d a -> Promise a
-  function exec (r) {
+  const e$ =
 
-    // avoid nasty undefined errors
-    if (!cache[r.src.key]) cache[r.key] = {}
+    // -- for some heterogeneous d a:
+    // fetch :: Request d a -> Promise a
+    { fetch (r) {
+        // avoid nasty undefined errors
+        if (!cache[r.src.key]) cache[r.key] = {}
 
-    // not cacheable, move on with our lives
-    if (!key)
-      return enqueue(r)
+        // not cacheable, move on with our lives
+        if (!key)
+          return enqueue(r)
 
-    const cached = cache[r.src.key][r.key]
+        const cached = cache[r.src.key][r.key]
 
-    // enqueue if not cached
-    const res = cached || enqueue(r)
+        // enqueue if not cached
+        const res = cached || enqueue(r)
 
-    // if cacheable, cache, avoiding double-fetches
-    if (!cached)
-      cache[r.src.key][r.key] = res
+        // if cacheable, cache, avoiding double-fetches
+        if (!cached)
+          cache[r.src.key][r.key] = res
 
-    return res
-  }
+        return res
+      }
 
-  return exec
+    // fetchAll :: [ Request d a ] -> [ Promise a ]
+    , fetchAll (rs) {
+        return Promise.map( rs )
+      }
+
+    // exec :: ServiceRequest a -> Promise a
+    , exec (r, args) {
+        // TODO: type validations
+        return r.resolve(e$, args)
+      }
+
+    }
+
+  return e$
+
 }
 
 export default Executor
