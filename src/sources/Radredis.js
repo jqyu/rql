@@ -69,7 +69,7 @@ function Requests(src) {
   const requests =
 
     // ACCESSORS
-    //
+
     { getIndex (m, params) {
         const index = params.index  || 'id'
         const limit = params.limit  || 30
@@ -175,6 +175,7 @@ function Radredis(port, host, options) {
             reject(res[0])
           } else {
             resolve(res[1].parse ? job.parse(res[1]) : res[1])
+            if (job.bust) bust(job.bust)
           }
         }
       })

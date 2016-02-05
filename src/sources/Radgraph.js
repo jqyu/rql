@@ -1,12 +1,14 @@
 import Redis from 'ioredis'
+import _     from 'lodash'
 
 function Requests(src) {
 
   const requests =
     // ACCESSORS
-    { get() {
+    { get(id, type) {
 
       }
+
     // MUTATORS
     , add(id1, type, id2, params) {
       }
@@ -19,12 +21,11 @@ function Requests(src) {
 
 }
 
-function Radgraph(options) {
+function Radgraph(port, host, options) {
 
-  const redis = null
+  const redis = new Redis(post, host, options)
 
   function exec(jobs, bust) {
-
   }
 
   const source =

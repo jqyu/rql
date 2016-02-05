@@ -3,6 +3,16 @@ import Promise from 'bluebird'
 
 import _       from 'lodash'
 
+const NodeAPI =
+  { // get node
+    // mutate node
+  }
+
+const NodeService =
+  { // top-level queries
+    // mutations
+  }
+
 describe('RQL', function() {
 
   const obj = { key: 'a' };
