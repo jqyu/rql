@@ -126,7 +126,7 @@ function Executor(opts) {
       }
 
     // fetchAll :: [ Request d a ] -> [ Promise a ]
-    , fetchAll (rs) {
+    , fetchAll (...rs) {
         return Promise.map( rs )
       }
 
