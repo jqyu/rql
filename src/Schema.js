@@ -1,10 +1,21 @@
-// Takes a list of top-level services and produces
-// a GraphQL Schema
+function Schema (GraphQL, apis, types, options) {
 
-// SchemaBuilder :: [ Service ] -> [ GraphQL Type ] -> GraphQL Schema
-function Schema (services, types, options) {
+  const { GraphQLSchema
+        , GraphQLObjectType
+        , GraphQLString
+        } = GraphQL
 
-  const schema = {}
+  const schema = new GraphQLSchema(
+    { query: new GraphQLObjectType(
+        { name: 'RootQueryType'
+        , fields:
+          { hello:
+            { type: GraphQLString
+            , resolve() { return 'world' }
+            }
+          }
+        })
+    })
 
   return schema
 

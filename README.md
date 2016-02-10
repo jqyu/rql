@@ -1,11 +1,15 @@
 # rql
 
-Had to take a break from my work on [RSL](https://github.com/jqyu/RSL) because the lack of functional dependencies, kind polymorphism and GADTs in purescript, combined with my lack of real functional programming experience, made type inferencing too much of a mess. I'm just a kid I don't know what I'm doing.
+## Getting Started
 
-So instead, here's RQL. Follows the same general architecture of Haxl, but uses type annotations instead of strong types and requires explicit concurrency (in the form of promises).
+Starting code is available in `/starter/`
 
-A data source declares a list of request constructors, and a means of performing batch execution. The RQL executor batches and caches requests.
+Just run
+```
+npm install
+npm start
+```
 
-A service is a set of functions with type annotations, RQL builds a GraphQL schema based on these annotations, and dynamically composes these services via GraphQL's executor.
+An RQL server will be initialized at [localhost:3000](http://localhost:3000/graphql)
 
-Docs and examples coming.
+## Writing our first API
