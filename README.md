@@ -35,7 +35,7 @@ description: >
 counter:
   type: integer
   description: >
-    Counter will
+    Counter will return the current counter value
 
 echo:
   type: string
@@ -55,7 +55,32 @@ incrementCounter:
     Will be incremented by 1 if no amount is specified
 ```
 
+The description fields are optional, and will be omitted from now on. They are used by `graphql-js` to produce more meaningful schemas.
+
 We describe an API `Fun` containing two fields: `counter` and `foobar`, as well as o mutation `incrementCounter`.
 Now we must provide implementations for these fields and mutations:
 
 ### `api.js`
+
+```js
+// API State
+
+let counter = 0
+
+// Requests
+
+export function counter() {
+  return counter
+}
+
+export function echo(e$, args) {
+  return args.text
+}
+
+// Mutations
+
+export function incrementCounter(e$, args) {
+  const amt = args.amt || 1
+  return counter += amt
+}
+```
