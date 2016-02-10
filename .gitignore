@@ -5,6 +5,9 @@ lib/
 # dependencies
 node_modules
 
+# experiment
+exp
+
 # misc
 *.log
 *.swo
