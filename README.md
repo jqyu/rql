@@ -2,9 +2,8 @@
 
 ## Getting Started
 
-Starting code is available in `/starter/`
+Starting code is available in [/starter/](https://github.com/jqyu/rql/tree/master/starter). To begin:
 
-Just run
 ```
 npm install
 npm start
