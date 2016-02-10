@@ -1,0 +1,62 @@
+--- # META
+
+source: Radredis
+description: >
+  Possible requests which can be made to a Radredis source
+
+# We do not use strict typing, so these types are just for reference
+types:
+  Id: integer
+  Index: string
+  Schema: object
+  Record: object
+  Unit: string # no meaningful return value
+
+--- # REQUESTS
+
+getIndex:
+  type: [ Id ]
+  args:
+    - schema: Schema!
+    - params:
+        index: Index
+        offset: integer
+        limit: integer
+  description: >
+    Queries a model's indexes to retrieve a list of Ids
+
+get:
+  type: Record
+  args:
+    - schema: Schema!
+    - id: Id!
+  description: >
+    Retries a normalized record by its model and unique primary key
+
+### # MUTATIONS
+
+incrId:
+  type: Id
+  args:
+    - schema: Schema!
+  mutation: true
+  description: >
+    Generates a fresh primary key by incrementing an Id counter
+
+save:
+  type: Record
+  args:
+    - schema: Schema!
+    - attributes: Record!
+  mutation: true
+  description: >
+    Saves a record to radredis, creating a new one if the unique primary key is not in use
+
+destroy:
+  type: Unit
+  args:
+    - schema: Schema!
+    - id: Id!
+  mutation: true
+  description: >
+    Destroys a record by its unique primary key

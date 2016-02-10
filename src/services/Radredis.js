@@ -29,21 +29,16 @@ function Service(schema, src) {
       { type: typeName
       , args: { id: 'Id'
               }
-      , resolve: (e$, args) =>
-          e$.fetch( src.req.get(m, args.id) )
+      , resolve: (e$, args) => e$
+          .fetch( src.req.get(m, args.id) )
       }
 
     , findMany:
       { type: [typeName]
       , args: { ids: ['Id']
               }
-      , resolve: (e$, args) =>
-          e$.fetchAll
-            ( _.map
-                ( args.ids
-                , id => e$.fetch( src.req.get(m, args.id) )
-                )
-            )
+      , resolve: (e$, args) => e$
+          .fetchMap( args.ids, id => src.req.get(m, id) )
       }
 
     , all:

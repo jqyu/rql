@@ -52,17 +52,13 @@ function Executor(opts) {
   // number of round trips
   let rtCount = 0
 
-  const cache = {} // :: Map DataSourceKey (Map RequestKey a)
+  const cache = {} // :: Map DataSourceKey (Map RequestKey (forall a. a))
 
   let queue = []   // :: forall a. Job r a
 
   // track dispatcher state
   let curJob = Promise.resolve()
   let nextJob = null
-
-  const bust = k => key => {
-      cache[k][key] = null
-    }
 
   // SIDE EFFECT: empties queue, resolves promises, changes job state
   function dispatchQueue () {
@@ -75,12 +71,13 @@ function Executor(opts) {
     const jobs = _.groupBy(q, 'req.src.key')
 
     nextJob = null   // copy and swap jobs,
-    return curJob =  // mapping all job groups to
-      Promise.all    // | the exec functions of their
-        ( _.map      // | respective data sources
+    return curJob = // mapping all job groups to
+      Promise.all  //  | the exec functions of their
+        ( _.map   //   | respective data sources
            ( jobs,
-             (rs, k) => rs[0].src            // data source
-                          .exec(rs, bust(k)) // call exec
+             (rs, k) =>
+               rs[0].src                 // data source
+                    .exec(rs, cache[k]) // call exec
            )
         )
 
@@ -104,37 +101,29 @@ function Executor(opts) {
   const e$ =
 
     // -- for some heterogeneous d a:
-    // fetch :: Request d a -> Promise a
-    { fetch (r) {
+    // exec :: Request d a -> Promise a
+    { exec(r) {
         // avoid nasty undefined errors
         if (!cache[r.src.key]) cache[r.key] = {}
 
         // not cacheable, move on with our lives
-        if (!key)
+        if (!r.key)
           return enqueue(r)
 
-        const cached = cache[r.src.key][r.key]
+        // check cache, enqueue if not found
+        return cache[r.src.key][r.key] || ( cache[r.src.key][r.key] = enqueue(r) )
 
-        // enqueue if not cached
-        const res = cached || enqueue(r)
-
-        // if cacheable, cache, avoiding double-fetches
-        if (!cached)
-          cache[r.src.key][r.key] = res
-
-        return res
       }
 
-    // fetchAll :: [ Request d a ] -> [ Promise a ]
-    , fetchAll (...rs) {
-        return Promise.map( rs )
-      }
+    // CONVENIENCE METHODS
 
-    // exec :: ServiceRequest a -> Promise a
-    , exec (r, args) {
-        // TODO: type validations
-        return r.resolve(e$, args)
-      }
+    // all :: [ Request d a ] -> [ Promise a ]
+    , all: rs =>
+        Promise.map( _.map( rs, e$.fetch ))
+
+    // map :: [ b ] -> ( b -> Request d a ) -> [ Promise a ]
+    , map: ( rs, fn ) =>
+        e$.fetchAll( _.map( rs , fn ) )
 
     }
 

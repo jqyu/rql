@@ -129,7 +129,7 @@ function Requests(src) {
       }
 
     , destroy (m, id) {
-        const n = 0
+        const n = indexes(m).length
         const r =
           { src
           , actions: p => {
@@ -169,7 +169,7 @@ function Radredis(port, host, options) {
         for (let i,j = 0; i < jobs.length; i++, j++) {
           const job = jobs[i]
           if (job.actions)
-            j += job.count
+            j += job.count - 1
           const res = r[j]
           if (res[0]) {
             reject(res[0])
