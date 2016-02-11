@@ -1,7 +1,7 @@
 import express     from 'express'
 import graphqlHTTP from 'express-graphql'
 
-import RQL         from '../src'
+import { RQL }     from '../src'
 
 const app = express()
 
