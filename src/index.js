@@ -23,6 +23,6 @@ export function RQL(GraphQL, types, services, apis) {
 
 }
 
-export { RadAPI
+export { RadService
        , RadType
        } from './utils'

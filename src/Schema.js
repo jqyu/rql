@@ -6,35 +6,27 @@ function Schema (GraphQL, R, apis) {
         , GraphQLObjectType
         } = GraphQL
 
-  function addField(fields, field, name) {
-    fields[name] =
-      { type: R.type(field.type)
-      , description: field.description
-      , args: R.parseArgs(field.args)
-      , resolve: (ctx, a, r) => field.resolve(r.e$, a, ctx, r)
-      }
-    return fields
-  }
-
   // Parse API to GraphQL type
 
   function apiSchema(fields, api) {
     const t = new GraphQLObjectType
       ( { name: api.name
         , description: api.description
-        , fields: () => _.reduce ( api.fields, addField, {} )
+        , fields: () => _.reduce ( api.fields, R.addField, {} )
         }
       )
     fields[api.name] =
       { type: t
       // TODO: allow custom resolve hook for an API (i.e. means of handling auth)
-      , resolve: () => ({ api: api.name })
+      , resolve: api.resolve
+          ? (__, a, r) => api.resolve(r.e$, a, r)
+          : () => ({ api: api.name })
       }
     return fields
   }
 
   function apiMutations(fields, api) {
-    _.reduce ( api.mutations, addField, fields )
+    _.reduce ( api.mutations, R.addField, fields )
     return fields
   }
 

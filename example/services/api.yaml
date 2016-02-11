@@ -1,0 +1,20 @@
+---
+
+name: API
+description: >
+  Example API
+resolve: resolve
+registered: registered
+
+---
+
+time: float
+counter:
+  type: integer
+
+---
+
+increment:
+  type: integer
+  args:
+    amount: integer

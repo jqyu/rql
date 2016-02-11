@@ -8,16 +8,24 @@ import yaml from 'js-yaml'
 // MUTATES THE FIELD PROPERTY !!
 function zipFields(fields, impl) {
   _.forEach ( fields , (field, name) => {
-      // TODO: resolve specialized cases,
-      // or else there will be a lot of redundant implementations
-      field.resolve = impl[name]
+      if (typeof field === "string" || typeof field === "array") {
+        // return field of parent
+        fields[name] =
+          { type: field
+          , resolve: (o) => o[name]
+          }
+      } else {
+        // check implementation
+        field.resolve = impl[name]
+      }
+
     })
   return fields
 }
 
 function readHeader(path) {
   // get file
-  const raw = fs.readFileSync(path, 'utf8')
+  const raw = fs.readFileSync(path + '.yaml', 'utf8')
   // set up response
   const header = {}
   const docs = [ 'meta', 'fields', 'mutations' ]
@@ -28,9 +36,13 @@ function readHeader(path) {
   return header
 }
 
-export function RadAPI(header, impl) {
+export function RadService(header, impl) {
   if (typeof header === "string")
     header = readHeader(header)
+  if (header.meta.registered)
+    header.meta.registered = impl[header.meta.registered]
+  if (header.meta.resolve)
+    header.meta.resolve = impl[header.meta.resolve]
   return _.assign
     ( {}
     , header.meta
@@ -43,6 +55,8 @@ export function RadAPI(header, impl) {
 export function RadType(header, impl) {
   if (typeof header === "string")
     header = readHeader(header)
+  if (header.meta.registered)
+    header.meta.registered = impl[header.meta.registered]
   return _.assign
     ( {}
     , header.meta

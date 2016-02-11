@@ -16,8 +16,8 @@ function Registry(GraphQL, types, services) {
   const registry =
 
     // hash maps of types and services
-    { types
-    , services
+    { types: {}
+    , services: {}
     }
 
   function type(obj) {
@@ -79,12 +79,16 @@ function Registry(GraphQL, types, services) {
       , args: parseArgs(field.args)
       , resolve: (o, a, r) => field.resolve(o, r.e$, a, r)
       }
+    return fields
   }
 
   // populate registry
 
   function registerService(s) {
     registry.services[s.name] = s
+    // call post-registration hook
+    if (s.registered)
+      s.registered(registry)
   }
 
   function registerType(t) {
@@ -100,6 +104,9 @@ function Registry(GraphQL, types, services) {
       , type:        gqlType
       , service:     service(t.service)
       }
+    // call post-registration hook
+    if (t.registered)
+      t.registered(registry)
   }
 
   // register all services
