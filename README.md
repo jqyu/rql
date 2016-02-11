@@ -120,3 +120,67 @@ mutation {
 ```
 Note that, due to limitations of `graphql-js`, mutations must be sent to the top-level in order to maintain serial execution.
 As such, it is imperative that mutation names are globally unique, or else collisions will occur.
+
+## Modular Services
+
+Notice that `RQL` takes an array of APIs.
+It is not uncommon for multiple APIs to share common resources.
+As such, we design a set of modular, reusable services which our APIs can call for common tasks.
+
+For example, we can separate our counter into its own service
+
+### `services/counter.js`
+
+```javascript
+let counter = 0
+
+export function get() {
+  return counter
+}
+
+export function increment(ctx, e$, args) {
+  const amt = args.amount || 1
+  return counter ++ amt
+}
+```
+
+And our API becomes as follows:
+
+### `api.js`
+ 
+```javascript
+import counter from './services/counter'
+
+// State
+
+let counter = 0
+
+// Requests
+
+export function echo(o, e$, args) {
+  return args.text
+}
+
+export const counter = counter.get
+
+// Mutations
+
+export const incrementCounter = counter.increment
+```
+
+**TODO:**
+
+- Implement header-level aliasing to services, RQL should be able to figure out how to re-route fields to services
+- Implement better header composition, so service headers can be reused as well
+
+## Types
+
+The main feature of GraphQL is the ability to compose queries.
+In order to make this possible, we need to have a system of composable types
+
+## Data Sources
+
+Notice that all of our resolve functions have been taking an `e$` parameter.
+This is the RQL executor, an interface for making efficient data requests.
+Since GraphQL queries are executed in a breadth-first search, it is difficult to analyze the execution context to generate efficient queries.
+Therefore, we defer data fetching to a batching executor, which collects requests from all points in the execution and sends them to a data source in batches.
