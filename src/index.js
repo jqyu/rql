@@ -1,22 +1,28 @@
 import Executor from './Executor'
+import Registry from './Registry'
 import Schema from './Schema'
 
-export function RQL(GraphQL, apis) {
+export function RQL(GraphQL, types, services, apis) {
 
-  const rsl =
+  const executor = Executor({ trace: true })
+  const registry = Registry(GraphQL, types, services)
+  const schema = Schema(GraphQL, registry, apis)
+
+  const rql =
     { Executor
     , Schema
 
     , RootValue: req => { e$: Executor() }
-    , executor: Executor({ trace: true })
-    , schema: Schema(GraphQL, apis)
+    , executor
+    , registry
+    , schema
     , serve: req => null // TODO:
     }
 
-  return rsl
+  return rql
 
 }
 
-export { RadAPIRead
-       , RadAPI
+export { RadAPI
+       , RadType
        } from './utils'

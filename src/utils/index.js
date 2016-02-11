@@ -15,10 +15,7 @@ function zipFields(fields, impl) {
   return fields
 }
 
-
-// parse an API representation
-
-export function RadAPIRead(path) {
+function readHeader(path) {
   // get file
   const raw = fs.readFileSync(path, 'utf8')
   // set up response
@@ -33,12 +30,22 @@ export function RadAPIRead(path) {
 
 export function RadAPI(header, impl) {
   if (typeof header === "string")
-    header = RadAPIRead(header)
+    header = readHeader(header)
   return _.assign
     ( {}
     , header.meta
     , { fields: zipFields(header.fields, impl)
       , mutations: zipFields(header.mutations, impl)
       }
+    )
+}
+
+export function RadType(header, impl) {
+  if (typeof header === "string")
+    header = readHeader(header)
+  return _.assign
+    ( {}
+    , header.meta
+    , { fields: zipFields(header.fields, impl) }
     )
 }

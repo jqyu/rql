@@ -73,13 +73,13 @@ export function counter() {
   return counter
 }
 
-export function echo(o, e$, args) {
+export function echo(e$, args) {
   return args.text
 }
 
 // Mutations
 
-export function incrementCounter(o, e$, args) {
+export function incrementCounter(e$, args) {
   const amt = args.amount || 1
   return counter += amt
 }
@@ -100,7 +100,7 @@ const API = RadAPI('api.yaml', require('./api'))
 Then we send our API to RQL:
 ```javascript
 // index.js
-const rql = RQL(require('graphql'), [API])
+const rql = RQL(require('graphql'), null, null, [API])
 ```
 
 Now, RQL should be ready to serve our new API, the following should both be valid queries, which can be executed on [GraphiQL](http://localhost:3000/graphql):
@@ -138,7 +138,7 @@ export function get() {
   return counter
 }
 
-export function increment(ctx, e$, args) {
+export function increment(e$, args) {
   const amt = args.amount || 1
   return counter ++ amt
 }
@@ -153,7 +153,7 @@ import { get, increment } from './services/counter'
 
 // Requests
 
-export function echo(o, e$, args) {
+export function echo(e$, args) {
   return args.text
 }
 
@@ -175,6 +175,8 @@ Our counter will maintain its state across all APIs
 
 The main feature of GraphQL is the ability to compose queries.
 In order to make this possible, we need to have a system of composable types
+
+
 
 ## Data Sources
 

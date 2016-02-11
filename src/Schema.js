@@ -1,84 +1,17 @@
 import _ from 'lodash'
 
-function Schema (GraphQL, apis) {
+function Schema (GraphQL, R, apis) {
 
-  const {
-        // type constructors
-          GraphQLSchema
+  const { GraphQLSchema
         , GraphQLObjectType
-        , GraphQLList
-        , GraphQLNonNull
-
-        // built-in scalar types
-        , GraphQLID
-        , GraphQLString
-        , GraphQLInt
-        , GraphQLFloat
-        , GraphQLBoolean
-
         } = GraphQL
-
-  // Create type registry
-
-  const types = {}
-
-  // Translate internal type representation to GraphQL type
-  function type(obj) {
-
-    // check non-null
-    if (obj['!'])
-      return new GraphQLNonNull(type(obj['!']))
-
-    // check list
-    if (obj.list)
-      return new GraphQLList(type(obj.list))
-    if (typeof obj === "array")
-      return new GraphQLList(obj[0])
-
-    // all other cases
-    switch (obj) {
-
-      case 'id':
-        return GraphQLID
-
-      case 'int':
-      case 'integer':
-        return GraphQLInt
-
-      case 'float':
-        return GraphQLFloat
-
-      case 'bool':
-      case 'boolean':
-        return GraphQLBoolean
-
-      case 'string':
-        return GraphQLString
-
-      default:
-        return types[obj] || GraphQLString
-
-    }
-
-  }
-
-  function parseArgs(args) {
-    if (!args) return undefined
-    return _.mapValues
-      ( args
-      , arg => (
-          { type: arg.type ? type(arg.type) : type(arg)
-          , description: arg.description
-          })
-      )
-  }
 
   function addField(fields, field, name) {
     fields[name] =
-      { type: type(field.type)
+      { type: R.type(field.type)
       , description: field.description
-      , args: parseArgs(field.args)
-      , resolve: (o, a, r) => field.resolve(o, r.e$, a, r)
+      , args: R.parseArgs(field.args)
+      , resolve: (ctx, a, r) => field.resolve(r.e$, a, ctx, r)
       }
     return fields
   }
@@ -89,11 +22,12 @@ function Schema (GraphQL, apis) {
     const t = new GraphQLObjectType
       ( { name: api.name
         , description: api.description
-        , fields: _.reduce ( api.fields, addField, {} )
+        , fields: () => _.reduce ( api.fields, addField, {} )
         }
       )
     fields[api.name] =
       { type: t
+      // TODO: allow custom resolve hook for an API (i.e. means of handling auth)
       , resolve: () => ({ api: api.name })
       }
     return fields
