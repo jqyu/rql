@@ -88,7 +88,7 @@ export function incrementCounter(o, e$, args) {
 Now we need to register our API with RQL so it can be served.
 
 First we build our API from our header and implementation file:
-```
+```javascript
 // index.js 
 import { RQL
        , RadAPI
@@ -98,23 +98,25 @@ const API = RadAPI('api.yaml', require('./api'))
 ```
 
 Then we send our API to RQL:
-```
+```javascript
 // index.js
 const rql = RQL(require('graphql'), [API])
 ```
 
-Now, RQL should be ready to serve our new API, the following should both be valid queries:
+Now, RQL should be ready to serve our new API, the following should both be valid queries, which can be executed on [GraphiQL](http://localhost:3000/graphql):
 ```graphql
-# simple query
 {
   Fun {
     counter
     echo (text: "hello world")
   }
 }
-# mutation
+```
+```graphql
 mutation {
   m1: incrementCounter(amount: 5)
   m2: incrementCounter
 }
 ```
+Note that, due to limitations of `graphql-js`, mutations must be sent to the top-level in order to maintain serial execution.
+As such, it is imperative that mutation names are globally unique, or else collisions will occur.
