@@ -17,3 +17,7 @@ export function increment(o, e$, args) {
   const amt = args.amount || 1
   return counter += amt
 }
+
+export { find as user
+       , create as createUser
+       } from './models/user/service'

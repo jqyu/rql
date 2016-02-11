@@ -8,16 +8,30 @@ import { RQL
        } from '../src'
 
 function service(path) {
-  return RadService('services/' + path, require('./services/' + path))
+  return RadService
+    ( `services/${path}`
+    , require(`./services/${path}`)
+    )
+}
+
+function type(t) {
+  return RadType
+    ( `services/models/${t}/type`
+    , require(`./services/models/${t}/type`)
+    )
+}
+
+function typeService(t) {
+  return service(`models/${t}/service`)
 }
 
 const types =
-  {
-
+  { User: type('user')
   }
 
 const services =
   { API: service('api')
+  , UserService: typeService('user')
   }
 
 const app = express()

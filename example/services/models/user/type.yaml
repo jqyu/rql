@@ -1,0 +1,13 @@
+---
+
+name: User
+service: UserService
+
+---
+
+id: integer
+
+name: name
+
+foo:
+  type: string

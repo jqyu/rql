@@ -12,9 +12,19 @@ time: float
 counter:
   type: integer
 
+user:
+  type: User
+  args:
+    id: integer!
+
 ---
 
 increment:
   type: integer
   args:
     amount: integer
+
+createUser:
+  type: User
+  args:
+    name: string
