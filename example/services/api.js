@@ -21,3 +21,10 @@ export function increment(o, e$, args) {
 export { find as user
        , create as createUser
        } from './models/user/service'
+
+export { find     as zone
+       , all      as zones
+       , create   as createZone
+       , update   as updateZone
+       , destroy  as destroyZone
+       } from './models/zone/service'

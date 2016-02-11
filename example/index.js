@@ -27,11 +27,13 @@ function typeService(t) {
 
 const types =
   { User: type('user')
+  , Zone: type('zone')
   }
 
 const services =
   { API: service('api')
   , UserService: typeService('user')
+  , ZoneService: typeService('zone')
   }
 
 const app = express()

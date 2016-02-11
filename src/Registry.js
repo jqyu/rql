@@ -25,12 +25,12 @@ function Registry(GraphQL, types, services) {
     if (obj['!'])
       return new GraphQLNonNull(type(obj['!']))
     if (typeof obj === "string" && obj.slice(-1) === '!')
-      return new GraphQLNonNull(obj.slice(0, -1))
+      return new GraphQLNonNull(type(obj.slice(0, -1)))
     // check list
     if (obj.list)
       return new GraphQLList(type(obj.list))
-    if (typeof obj === "array")
-      return new GraphQLList(obj[0])
+    if (_.isArray(obj))
+      return new GraphQLList(type(obj[0]))
     // all other cases
     switch (obj) {
       case 'id':
@@ -77,7 +77,7 @@ function Registry(GraphQL, types, services) {
       { type: type(field.type)
       , description: field.description
       , args: parseArgs(field.args)
-      , resolve: (o, a, r) => field.resolve(o, r.e$, a, r)
+      , resolve: (o, a, { rootValue: r }) => field.resolve(o, r.e$, a, r)
       }
     return fields
   }
@@ -102,7 +102,7 @@ function Registry(GraphQL, types, services) {
       { name:        t.name
       , description: t.description
       , type:        gqlType
-      , service:     service(t.service)
+      , service:     t.service && service(t.service)
       }
     // call post-registration hook
     if (t.registered)

@@ -33,7 +33,7 @@ get:
   description: >
     Retries a normalized record by its model and unique primary key
 
-### # MUTATIONS
+--- # MUTATIONS
 
 incrId:
   type: Id

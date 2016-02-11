@@ -8,7 +8,7 @@ import yaml from 'js-yaml'
 // MUTATES THE FIELD PROPERTY !!
 function zipFields(fields, impl) {
   _.forEach ( fields , (field, name) => {
-      if (typeof field === "string" || typeof field === "array") {
+      if (typeof field === "string" || _.isArray(field)) {
         // return field of parent
         fields[name] =
           { type: field
@@ -23,7 +23,7 @@ function zipFields(fields, impl) {
   return fields
 }
 
-function readHeader(path) {
+export function RadHeader(path) {
   // get file
   const raw = fs.readFileSync(path + '.yaml', 'utf8')
   // set up response
@@ -38,7 +38,7 @@ function readHeader(path) {
 
 export function RadService(header, impl) {
   if (typeof header === "string")
-    header = readHeader(header)
+    header = RadHeader(header)
   if (header.meta.registered)
     header.meta.registered = impl[header.meta.registered]
   if (header.meta.resolve)
@@ -54,12 +54,23 @@ export function RadService(header, impl) {
 
 export function RadType(header, impl) {
   if (typeof header === "string")
-    header = readHeader(header)
+    header = RadHeader(header)
   if (header.meta.registered)
     header.meta.registered = impl[header.meta.registered]
   return _.assign
     ( {}
     , header.meta
     , { fields: zipFields(header.fields, impl) }
+    )
+}
+
+export function RadRequests(source, impl) {
+  return _.mapValues
+    ( impl
+    , fn => function() {
+        const req = fn(...arguments)
+        req.src = source
+        return req
+      }
     )
 }

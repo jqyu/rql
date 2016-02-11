@@ -3,7 +3,7 @@ const environment =
   , redis:
     { name: 'rql-demo'
     , db: 15
-    , keyPrefix: 'rql-demo'
+    , keyPrefix: 'rql-demo:'
     }
   }
 

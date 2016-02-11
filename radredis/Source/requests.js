@@ -1,35 +1,16 @@
-import _     from 'lodash'
+import _ from 'lodash'
 
 // HELPERS
 
-const systemProps =
-  { id:
-    { type: 'integer'
-    , index: true
-    }
-  , created_at:
-    { type: 'integer'
-    , index: true
-    }
-  , updated_at:
-    { type: 'integer'
-    , index: true
-    }
-  }
-
 const indexes = s =>
-  _.union
-    ( _.keys(s.properties)
-        .filter(key => s.properties[key].index)
-    , _.keys(systemProps)
-    )
+  _.keys(s.properties)
+    .filter(key => s.properties[key].index)
 
 const deserialize = s => attributes =>
   _.mapValues
-    ( _.fromPairs                     // array -> hashmap
-        ( _.chunk (attributes, 2))
+    ( attributes
     , (value, key) => {               // deserialize fields
-        const prop = s.properties[key] || systemProps[key]
+        const prop = s.properties[key]
         const type = prop && prop.type
         if (type === 'array' || type === 'object')
           return (typeof value === 'string')
@@ -52,7 +33,7 @@ const serialize = attributes =>
 
 // IMPLEMENTATIONS
 
-export function getIndex(s, params) {
+export function getIndex(s, params = {}) {
 
   const index = params.index  || 'id'
   const limit = params.limit  || 30
@@ -73,7 +54,7 @@ export function get(s, id) {
   const r =
     { key: `${s.key}:${id}`
     , action: p =>
-        p.hgetall(`${s.key}:${id}`)
+        p.hgetall(`${s.key}:${id}:attributes`)
     , parse: deserialize(s)
     }
 
@@ -121,7 +102,7 @@ export function save(s, attributes) {
 
 export function destroy(s, id) {
 
-  const idxs = idxs(s)
+  const idxs = indexes(s)
 
   const r =
     { actions: p => {
@@ -136,5 +117,7 @@ export function destroy(s, id) {
     , count: 1 + idxs.length
     , busts: [ `${s.key}:${id}` ]
     }
+
+  return r
 
 }

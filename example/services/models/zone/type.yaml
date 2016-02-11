@@ -1,0 +1,19 @@
+---
+
+name: Zone
+service: ZoneService
+
+---
+
+id: integer
+
+foo: [ integer ]
+
+bar: string
+
+baz:
+  type: string
+  redis: true
+
+qux:
+  type: integer

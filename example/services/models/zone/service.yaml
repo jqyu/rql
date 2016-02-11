@@ -1,28 +1,20 @@
 ---
 
-name: API
-description: >
-  Example API
-resolve: resolve
-registered: registered
+name: ZoneService
 
 ---
 
-time: float
-counter:
-  type: integer
-
-user:
-  type: User
-  args:
-    id: integer!
-
-zone:
+find:
   type: Zone
   args:
     id: integer!
 
-zones:
+findMany:
+  type: [ Zone ]
+  args:
+    ids: [ integer ]
+
+all:
   type: [ Zone ]
   args:
     index: string
@@ -31,24 +23,14 @@ zones:
 
 ---
 
-increment:
-  type: integer
-  args:
-    amount: integer
-
-createUser:
-  type: User
-  args:
-    name: string
-
-createZone:
+create:
   type: Zone
   args:
     foo: [ integer ]
     bar: string
     baz: string
 
-updateZone:
+update:
   type: Zone
   args:
     id: integer!
@@ -56,7 +38,7 @@ updateZone:
     bar: string
     baz: string
 
-destroyZone:
+destroy:
   type: string
   args:
     id: integer!

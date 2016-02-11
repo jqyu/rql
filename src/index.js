@@ -12,7 +12,10 @@ export function RQL(GraphQL, types, services, apis) {
     { Executor
     , Schema
 
-    , RootValue: req => { e$: Executor() }
+    , RootValue: req => (
+        { e$: Executor()
+        })
+
     , executor
     , registry
     , schema
@@ -23,6 +26,8 @@ export function RQL(GraphQL, types, services, apis) {
 
 }
 
-export { RadService
+export { RadHeader
+       , RadService
        , RadType
+       , RadRequests
        } from './utils'

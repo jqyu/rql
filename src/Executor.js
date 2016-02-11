@@ -76,8 +76,8 @@ function Executor(opts) {
         ( _.map   //   | respective data sources
            ( jobs,
              (rs, k) =>
-               rs[0].src                 // data source
-                    .exec(rs, cache[k]) // call exec
+               rs[0].req.src                 // data source
+                        .exec(rs, cache[k]) // call exec
            )
         )
 
@@ -104,14 +104,15 @@ function Executor(opts) {
     // exec :: Request d a -> Promise a
     { exec(r) {
         // avoid nasty undefined errors
-        if (!cache[r.src.key]) cache[r.key] = {}
+        if (!cache[r.src.key]) cache[r.src.key] = {}
 
         // not cacheable, move on with our lives
         if (!r.key)
           return enqueue(r)
 
         // check cache, enqueue if not found
-        return cache[r.src.key][r.key] || ( cache[r.src.key][r.key] = enqueue(r) )
+        return cache[r.src.key][r.key]
+          || ( cache[r.src.key][r.key] = enqueue(r) )
 
       }
 
@@ -119,11 +120,11 @@ function Executor(opts) {
 
     // all :: [ Request d a ] -> [ Promise a ]
     , all: rs =>
-        Promise.map( _.map( rs, e$.fetch ))
+        Promise.all( _.map( rs, e$.exec ))
 
     // map :: [ b ] -> ( b -> Request d a ) -> [ Promise a ]
     , map: ( rs, fn ) =>
-        e$.fetchAll( _.map( rs , fn ) )
+        e$.all( _.map( rs , fn ) )
 
     }
 
