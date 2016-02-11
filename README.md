@@ -149,11 +149,7 @@ And our API becomes as follows:
 ### `api.js`
  
 ```javascript
-import counter from './services/counter'
-
-// State
-
-let counter = 0
+import { get, increment } from './services/counter'
 
 // Requests
 
@@ -161,12 +157,14 @@ export function echo(o, e$, args) {
   return args.text
 }
 
-export const counter = counter.get
+export const counter = get
 
 // Mutations
 
-export const incrementCounter = counter.increment
+export const incrementCounter = increment
 ```
+
+Our counter will maintain its state across all APIs
 
 **TODO:**
 
